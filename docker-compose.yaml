@@ -1,0 +1,72 @@
+version: '3.6'
+
+networks:
+	stateset: 
+
+services:
+  postgres:
+    image: postgres:12
+    restart: always
+    volumes:
+    - db_data:/var/lib/postgresql/data
+    environment:
+      POSTGRES_PASSWORD: postgrespassword
+  graphql-engine:
+    image: hasura/graphql-engine:v1.1.0
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "postgres"
+    restart: always
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:postgrespassword@postgres:5432/postgres
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      HASURA_GRAPHQL_ENABLED_LOG_TYPES: startup, http-log, webhook-log, websocket-log, query-log
+      HASURA_GRAPHQL_ADMIN_SECRET: myadminsecretkey
+  hasura-backend-plus:
+    image: nhost/hasura-backend-plus:latest
+    environment:
+      PORT: 3010
+      AUTH_ACTIVE: 'true'
+      AUTH_LOCAL_ACTIVE: 'true'
+      USER_FIELDS: ''
+      USER_REGISTRATION_AUTO_ACTIVE: 'true'
+      HASURA_GRAPHQL_ENDPOINT: http://graphql-engine:8080/v1/graphql
+      HASURA_GRAPHQL_ADMIN_SECRET: <hasura-admin-secret>
+      HASURA_GRAPHQL_JWT_SECRET: '{"type": "HS256", "key": "a_pretty_long_secret_key"}'
+      S3_ACCESS_KEY_ID: <access>
+      S3_SECRET_ACCESS_KEY: <secret>
+      S3_ENDPOINT: <endpoint>
+      S3_BUCKET: <bucket>
+      REFRESH_TOKEN_EXPIRES: 43200
+	  JWT_TOKEN_EXPIRES: 15
+  stateset: 
+	image: stateset/stateset:latest
+	environment:
+	  STATESET_LEGAL_NAME: ''
+	  STATESET_P2P_ADDRESS: ''
+	  STATESET_COMPATIBILITY_ZONE_URL: ''
+	  STATESET_KEY_STORE_PASSWORD: ''
+	  STATESET_TRUST_STORE_PASSWORD: ''
+	  STATESET_DB_USER: 'postgres'
+	  STATESET_DB_PASS: 'postgres'
+	  STATESET_DB_DRIVER: 'org.postgresql.ds.PGSimpleDataSource'
+	  STATESET_DB_URL: 'postgres://postgres:postgrespassword@postgres:5432/postgres'
+	networks:
+	  stateset:
+  network-map:
+    image: cordite/network-map:v0.3.1
+    ports:
+      - "8080:8080"
+    environment:
+      NMS_PORT: 8080
+      NMS_DB: /opt/stateset/db
+      NMS_AUTH_USERNAME: admin
+      NMS_AUTH_PASSWORD: admin
+      NMS_TLS: false
+      NMS_DOORMAN: false
+      NMS_CERTMAN: false
+      NMS_CACHE_TIMEOUT: 10S
+      NMS_STORAGE_TYPE: file
+volumes:
+  db_data:
