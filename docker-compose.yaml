@@ -39,21 +39,21 @@ services:
       S3_ENDPOINT: <endpoint>
       S3_BUCKET: <bucket>
       REFRESH_TOKEN_EXPIRES: 43200
-	  JWT_TOKEN_EXPIRES: 15
+	    JWT_TOKEN_EXPIRES: 15
   stateset: 
-	image: stateset/stateset:latest
-	environment:
-	  STATESET_LEGAL_NAME: ''
-	  STATESET_P2P_ADDRESS: ''
-	  STATESET_COMPATIBILITY_ZONE_URL: ''
-	  STATESET_KEY_STORE_PASSWORD: ''
-	  STATESET_TRUST_STORE_PASSWORD: ''
-	  STATESET_DB_USER: 'postgres'
-	  STATESET_DB_PASS: 'postgres'
-	  STATESET_DB_DRIVER: 'org.postgresql.ds.PGSimpleDataSource'
-	  STATESET_DB_URL: 'postgres://postgres:postgrespassword@postgres:5432/postgres'
-	networks:
-	  stateset:
+	  image: stateset/stateset:latest
+	  environment:
+	    STATESET_LEGAL_NAME: ''
+	    STATESET_P2P_ADDRESS: ''
+	    STATESET_COMPATIBILITY_ZONE_URL: ''
+	    STATESET_KEY_STORE_PASSWORD: ''
+	    STATESET_TRUST_STORE_PASSWORD: ''
+	    STATESET_DB_USER: 'postgres'
+	    STATESET_DB_PASS: 'postgres'
+	    STATESET_DB_DRIVER: 'org.postgresql.ds.PGSimpleDataSource'
+	    STATESET_DB_URL: 'postgres://postgres:postgrespassword@postgres:5432/postgres'
+	  networks:
+	    stateset:
   network-map:
     image: cordite/network-map:v0.3.1
     ports:
