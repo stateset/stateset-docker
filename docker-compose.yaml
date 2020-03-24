@@ -62,19 +62,17 @@ services:
       - stateset_certificates:/opt/stateset/certificates
     networks:
 	    stateset:
-  network-map:
-    image: cordite/network-map:v0.3.1
+  caddy:
+    image: abiosoft/caddy:0.11.0
+    depends_on:
+    - "graphql-engine"
+    restart: always
     ports:
-      - "8080:8080"
-    environment:
-      NMS_PORT: 8080
-      NMS_DB: /opt/stateset/db
-      NMS_AUTH_USERNAME: admin
-      NMS_AUTH_PASSWORD: admin
-      NMS_TLS: false
-      NMS_DOORMAN: false
-      NMS_CERTMAN: false
-      NMS_CACHE_TIMEOUT: 10S
-      NMS_STORAGE_TYPE: file
+    - "80:80"
+    - "443:443"
+    volumes:
+    - ./Caddyfile:/etc/Caddyfile
+    - caddy_certs:/root/.caddy
 volumes:
   db_data:
+  caddy_certs:
